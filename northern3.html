@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Terrace Area Landmarks</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v3.1.0/mapbox-gl.js"></script>
+    <link
+      href="https://api.tiles.mapbox.com/mapbox-gl-js/v3.1.0/mapbox-gl.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      #map {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      mapboxgl.accessToken = 'pk.eyJ1IjoiYWRhbTc3NDIiLCJhIjoiY2x0ZGJvamN1MDFxazJqbzVrcHdpdTFmZCJ9.Y9wHFbTGN-5gDzwpBgW3Wg';
+      const map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/adam7742/clu8wjmnt02hi01pt5vva40ib', //the same style I made last time and being used in the same area once again. 
+        center: [-128.561557, 54.533748],
+        zoom: 11.2
+      });
+
+      map.on('click', (event) => { //create listening event for popup
+        const features = map.queryRenderedFeatures(event.point, {
+          layers:['northern-landmarks'] //I previously tried to split my data up into different layers per type of activity but I ended up with some sort of syntax error I couldn't troubleshoot
+        });
+        if (!features.length) {
+          return;
+        }
+        const feature = features[0];
+        console.log(feature);
+
+        const popup = new mapboxgl.Popup({ offset: [0, -15] }) //create popup
+          .setLngLat(feature.geometry.coordinates)
+          .setHTML(
+            '<h3>'+feature.properties["Name"]+'</h3><p>'+feature.properties["Description"]+'</p>'
+          )
+          .addTo(map);
+      });
+    </script>
+  </body>
+</html>
